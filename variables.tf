@@ -3,8 +3,8 @@ variable "project" {
   type        = string
 }
 
-variable "high_avaiability" {
-  description = "Do you need HA?"
-  type = bool
-  default = true
-}
+//variable "high_avaiability" {
+//  description = "Do you need HA?"
+//  type = bool
+//  default = true
+//}

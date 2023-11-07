@@ -17,9 +17,10 @@ resource "google_compute_subnetwork" "default" {
   network       = google_compute_network.vpc_network.id
 }
 
-# Create a single Compute Engine instance
+# Create a few Compute instnaces
 resource "google_compute_instance" "default" {
-  name         = "nginx-vm" 
+  count        = (var.high_avaiability == true ? 2 : 1)
+  name         = "nginx-vm-${count.index}"
   machine_type = "f1-micro"
   zone         = "europe-central2-a"
 
@@ -37,6 +38,8 @@ resource "google_compute_instance" "default" {
   }
 }
 
+
+
 resource "google_compute_firewall" "nginx" {
   name    = "nginx-firewall"
   network = google_compute_network.vpc_network.id
@@ -48,6 +51,6 @@ resource "google_compute_firewall" "nginx" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-output "nginx-url" {
-  value = "http://${google_compute_instance.default.network_interface[0].access_config[0].nat_ip}:80"
+output "nginx-urls" {
+  value = [for instance in google_compute_instance.default : "http://${instance.network_interface[0].access_config[0].nat_ip}:80"]
 }
